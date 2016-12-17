@@ -1,0 +1,59 @@
+%% -*- mode: latex; fill-column: 80; comment-column: 50; -*-
+\documentclass[11pt,english]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{pdfpages}
+\usepackage{babel}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{float}
+\usepackage[justification=centering]{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{diagbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\renewcommand*\ttdefault{lmtt}
+\renewcommand*\sfdefault{lmss}
+
+\DeclareMathOperator*{\argmax}{argmax}
+
+\begin{document}
+
+\author{\textbf{Group 2} \\* Arian Barakat \\* Hao Chi KIANG \\* Rebin Hosini \\ Yumeng Li}
+\title{Introduction to Machine Learning: Lab 6}
+\maketitle
+
+\section*{Artificial Neural Network to Predict the
+  Trigonometric Sine Function}
+
+
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width = 0.9\textwidth]{uniwinter.pdf}
+%   \caption{Forecast result in winter}
+%   \label{uniwinter}
+% \end{figure}
+
+
+\newpage
+\lstset{
+  frame=single,
+  basicstyle=\ttfamily\footnotesize,
+  commentstyle=\color{gray},
+  frame=L,
+  language=R,
+  showstringspaces=false,
+}
+
+\newpage
+\section*{Appendix 1: R code used}
+\label{ax2}
+\lstinputlisting{worksheet1.R}
+
+\end{document}
+
