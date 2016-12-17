@@ -1,0 +1,421 @@
+\documentclass[11pt,english]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{pdfpages}
+\usepackage{babel}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{float}
+\usepackage[justification=centering]{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{diagbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\renewcommand*\ttdefault{lmtt}
+\renewcommand*\sfdefault{lmss}
+
+\DeclareMathOperator*{\argmax}{argmax}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\author{Hao Chi KIANG}
+\title{Introduction to Machine Learning: Lab 3 Block 2}
+\maketitle
+
+
+
+\section*{Assignment 1: High-dimensional methods}
+\subsection*{Assignment 1.1: Nearest Shrunken Centroid}
+
+
+
+\autoref{cvmodel} shows the result of a cross validation. The plot shows
+that some values between 1.0 and 1.5 or 2.5 to 3 would be good choice as it
+shows the error rate are lowest in this region. Anything bigger than 2.5 is
+having too few words and anything smaller than 1 seems to be over-fitting.
+In our case, we would choose the model with threshold=1 in the
+following discussion, because this value have more features, hence can
+tolerate more diversity.
+
+\begin{figure}[H]
+  \centering
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/cvmodel-1} 
+
+\end{knitrout}
+\caption{Cross validation result with different threshold values}
+\label{cvmodel}
+\end{figure}
+
+A centroid plot is shown in \autoref{centroid}. In this model, the chosen
+words are listed as follows:
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##       id           0-score   1-score  
+##  [1,] "papers"     "-0.4229" "0.5787" 
+##  [2,] "important"  "-0.3961" "0.542"  
+##  [3,] "submission" "-0.3804" "0.5205" 
+##  [4,] "position"   "0.3648"  "-0.4992"
+##  [5,] "published"  "-0.3161" "0.4326" 
+##  [6,] "call"       "-0.3133" "0.4288" 
+##  [7,] "due"        "-0.3133" "0.4288" 
+##  [8,] "conference" "-0.3124" "0.4275" 
+##  [9,] "dates"      "-0.3124" "0.4275" 
+## [10,] "candidates" "0.2958"  "-0.4048"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+These words are intuitively good indication for conference-related mails:
+seemingly most of these email would talk about submitting papers.
+
+\begin{figure}[H]
+  \centering
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/centroid-1} 
+
+\end{knitrout}
+\caption{Centroid plot of the model with threshold=1}
+\label{centroid}
+\end{figure}
+
+Test error is 0.0526316, which is very low in this case.
+
+
+\subsection*{Assignment 1.2: Elastic Net and Support Vector Machine}
+
+
+\autoref{cvglm} shows the cross validation result of elastic net using
+the $glmnet$ library. 0.104439 is the value of $\lambda$
+selected by the library. The prediction error is 0.1052632,
+significantly larger than that of nearest shrunken centroid method.
+
+\begin{figure}[H]
+  \centering
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/cvglm-1} 
+
+\end{knitrout}
+\caption{Cross validation result of Elastic net}
+\label{cvglm}
+\end{figure}
+
+On the other hand, the SVM done with the following code gives the same error
+rate than the nearest shrunken centroid:
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(}\hlstr{'kernlab'}\hlstd{)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{12345}\hlstd{)}
+\hlstd{svmmod} \hlkwb{<-} \hlkwd{ksvm}\hlstd{(Conference} \hlopt{~} \hlstd{.,}
+               \hlkwc{data} \hlstd{= train,}
+               \hlkwc{kernel} \hlstd{=} \hlstr{'vanilladot'}\hlstd{,}
+               \hlkwc{scaled} \hlstd{= F)}
+\hlstd{err.svmmod} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{predict}\hlstd{(svmmod, test)} \hlopt{!=} \hlstd{test[,CONFERENCE])}
+\hlkwd{print}\hlstd{(err.svmmod)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+The following table summerises the error rates of the three methods:\\
+\begin{tabular}{l|l}
+Method & Error rate\\
+\hline
+Nearest Shrunken Centroid & 0.0526316\\
+Elastic Net & 0.1052632\\
+SVM & 0.0526316
+\end{tabular}\\
+
+I would prefer nearest shrunken centroid for its straight forward
+interpretation.
+
+
+\subsection*{Assignment 1.3: Benjamini-Hochberg Multiple Testing}
+
+
+
+The following are the words whose hypothesis are rejected by my
+implementation of the Benjamini-Hochberg, with $\alpha = 0.05$,
+sorted in ascending order of their p-values.
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##      [,1]        
+## [1,] "important" 
+## [2,] "position"  
+## [3,] "papers"    
+## [4,] "submission"
+## [5,] "candidates"
+## [6,] "published"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The top ten features are consistent with the previous results with different
+methods. That these features has high p-values means that the we can decide
+that the distribution of them are different between conference emails and
+non-conference emails.
+
+
+\section*{Assignment 2: Budget Online SVM}
+
+
+
+\begin{figure}[H]
+  \centering
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/spamplot-1} 
+
+\end{knitrout}
+\caption{Budget Online SVM Error Rates with $h = 1$.}
+\label{spamplot}
+\end{figure}
+
+
+\section*{Appendix 1: All codes}
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{opts_chunk}\hlopt{$}\hlkwd{set}\hlstd{(}\hlkwc{size} \hlstd{=} \hlstr{'small'}\hlstd{)}
+\hlcom{######## Assignment 1.1}
+\hlkwd{library}\hlstd{(}\hlstr{'pamr'}\hlstd{)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{12345}\hlstd{)}
+\hlstd{dat0} \hlkwb{<-} \hlkwd{read.csv2}\hlstd{(}\hlstr{'../question/data.csv'}\hlstd{,}
+                  \hlkwc{fileEncoding} \hlstd{=} \hlstr{'ISO-8859-1'}\hlstd{,}
+                  \hlkwc{encoding} \hlstd{=} \hlstr{'UTF-8'}\hlstd{)}
+
+\hlstd{dat} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(dat0)}
+
+\hlstd{CONFERENCE} \hlkwb{<-} \hlkwd{colnames}\hlstd{(dat)} \hlopt{==} \hlstr{'Conference'}
+\hlstd{NON.CONFERENCE} \hlkwb{<-} \hlopt{!} \hlstd{CONFERENCE}
+
+\hlstd{dat[ ,CONFERENCE]} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(dat0[, CONFERENCE])}
+\hlkwd{rownames}\hlstd{(dat)} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(dat))}
+\hlstd{train.idx} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwd{nrow}\hlstd{(dat),} \hlkwd{round}\hlstd{(}\hlkwd{nrow}\hlstd{(dat)} \hlopt{*} \hlnum{0.7}\hlstd{))}
+\hlstd{train} \hlkwb{<-} \hlstd{dat[train.idx, ]}
+\hlstd{test} \hlkwb{<-} \hlstd{dat[}\hlopt{-}\hlstd{train.idx, ]}
+
+\hlstd{totrain} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{t}\hlstd{(train[,NON.CONFERENCE]),}
+                \hlkwc{y} \hlstd{= train[,CONFERENCE],}
+                \hlkwc{geneid} \hlstd{=} \hlkwd{colnames}\hlstd{(train),}
+                \hlkwc{genenames} \hlstd{=} \hlkwd{colnames}\hlstd{(train))}
+
+
+\hlstd{model} \hlkwb{<-} \hlkwd{pamr.train}\hlstd{(totrain,} \hlkwc{threshold} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{,} \hlnum{0.1}\hlstd{))}
+\hlstd{cvmodel} \hlkwb{<-} \hlkwd{pamr.cv}\hlstd{(model, totrain)}
+\hlstd{best} \hlkwb{<-} \hlnum{1.0}
+
+\hlstd{best.words} \hlkwb{<-} \hlkwd{head}\hlstd{(} \hlkwd{pamr.listgenes}\hlstd{(model, totrain,}
+                                   \hlkwc{threshold} \hlstd{= best),} \hlkwc{n} \hlstd{=} \hlnum{10}\hlstd{)}
+
+\hlstd{test.error} \hlkwb{<-}
+    \hlkwd{mean}\hlstd{(test[,CONFERENCE]} \hlopt{!=}
+         \hlkwd{pamr.predict}\hlstd{(model,}
+                      \hlkwd{t}\hlstd{(}\hlkwd{as.matrix}\hlstd{(test[,NON.CONFERENCE])),}
+                      \hlstd{best))}
+\hlkwd{pamr.plotcv}\hlstd{(cvmodel)}
+\hlstd{best.words}
+\hlkwd{pamr.plotcen}\hlstd{(model, totrain,} \hlkwc{threshold} \hlstd{= best)}
+\hlkwd{library}\hlstd{(}\hlstr{'glmnet'}\hlstd{)}
+\hlkwd{set.seed}\hlstd{(}\hlnum{12345}\hlstd{)}
+\hlstd{glmmod} \hlkwb{<-} \hlkwd{cv.glmnet}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{as.matrix}\hlstd{(train[,NON.CONFERENCE]),}
+                    \hlkwc{y} \hlstd{= train[,CONFERENCE],}
+                    \hlkwc{alpha} \hlstd{=} \hlnum{0.5}\hlstd{,}
+                    \hlkwc{family} \hlstd{=} \hlstr{'binomial'}\hlstd{)}
+
+\hlstd{glmerr} \hlkwb{<-} \hlkwd{mean}\hlstd{((}\hlkwd{predict}\hlstd{(glmmod,}
+                        \hlkwd{as.matrix}\hlstd{(test[,NON.CONFERENCE]),}
+                        \hlkwc{s} \hlstd{=} \hlstr{"lambda.min"}\hlstd{)} \hlopt{>} \hlnum{0}\hlstd{)} \hlopt{+} \hlnum{1} \hlopt{==}
+               \hlstd{test[,CONFERENCE])}
+\hlcom{######## Assignment 1.2}
+\hlkwd{plot}\hlstd{(glmmod)}
+\hlkwd{library}\hlstd{(}\hlstr{'kernlab'}\hlstd{)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{12345}\hlstd{)}
+\hlstd{svmmod} \hlkwb{<-} \hlkwd{ksvm}\hlstd{(Conference} \hlopt{~} \hlstd{.,}
+               \hlkwc{data} \hlstd{= train,}
+               \hlkwc{kernel} \hlstd{=} \hlstr{'vanilladot'}\hlstd{,}
+               \hlkwc{scaled} \hlstd{= F)}
+\hlstd{err.svmmod} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{predict}\hlstd{(svmmod, test)} \hlopt{!=} \hlstd{test[,CONFERENCE])}
+\hlkwd{print}\hlstd{(err.svmmod)}
+\hlcom{####### Benjamini-Hochberg}
+\hlcom{## Alpha value for Benjamini-Hochberg method}
+\hlstd{bhalpha} \hlkwb{<-} \hlnum{0.05}
+
+\hlstd{bh.featselect} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{,} \hlkwc{alpha}\hlstd{) \{}
+    \hlstd{sp} \hlkwb{<-} \hlkwd{split}\hlstd{(x, y)}
+
+    \hlstd{pvals} \hlkwb{<-} \hlkwd{sapply}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(x),} \hlkwa{function} \hlstd{(}\hlkwc{feat}\hlstd{) \{}
+        \hlkwd{t.test}\hlstd{(}\hlkwc{x} \hlstd{= sp[[}\hlnum{1}\hlstd{]][,feat],}
+               \hlkwc{y} \hlstd{= sp[[}\hlnum{2}\hlstd{]][,feat],}
+               \hlkwc{alternative} \hlstd{=} \hlstr{"two.sided"}\hlstd{)}\hlopt{$}\hlstd{p.value}
+    \hlstd{\})} \hlcom{# Zero result means sample variance = 0: untestable}
+
+    \hlkwd{names}\hlstd{(pvals)} \hlkwb{<-} \hlkwd{colnames}\hlstd{(x)}
+    \hlstd{ord} \hlkwb{<-} \hlkwd{order}\hlstd{(pvals)}
+    \hlstd{max.j} \hlkwb{<-} \hlkwd{max}\hlstd{(}\hlkwd{which}\hlstd{( pvals[ord]} \hlopt{<=}
+                        \hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(pvals))} \hlopt{*}\hlstd{alpha} \hlopt{/}\hlkwd{length}\hlstd{(pvals)))}
+
+    \hlstd{toreturn} \hlkwb{<-} \hlstd{ord[}\hlnum{1}\hlopt{:}\hlstd{max.j]}
+    \hlkwd{names}\hlstd{(toreturn)} \hlkwb{<-} \hlkwd{colnames}\hlstd{(x)[toreturn]}
+    \hlstd{toreturn}
+\hlstd{\}}
+
+\hlkwd{print}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{t}\hlstd{((}\hlkwd{names}\hlstd{(}
+              \hlkwd{bh.featselect}\hlstd{(train[,NON.CONFERENCE],}
+                            \hlstd{train[CONFERENCE], bhalpha))))))}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{1234567890}\hlstd{)}
+\hlstd{spam} \hlkwb{<-} \hlkwd{read.csv2}\hlstd{(}\hlstr{"../question/spambase.csv"}\hlstd{)}
+\hlstd{ind} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(spam))}
+\hlstd{spam} \hlkwb{<-} \hlstd{spam[ind,}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{48}\hlstd{,}\hlnum{58}\hlstd{)]}
+\hlstd{spam} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(spam)}          \hlcom{# Much, much faster computation}
+\hlstd{h} \hlkwb{<-} \hlnum{1}
+\hlstd{N} \hlkwb{<-} \hlnum{500}                         \hlcom{# number of training points}
+
+\hlstd{SPAM.COL} \hlkwb{<-} \hlkwd{colnames}\hlstd{(spam)} \hlopt{==} \hlstr{'Spam'}
+\hlstd{FEAT.COL} \hlkwb{<-} \hlopt{!} \hlstd{SPAM.COL}
+
+\hlstd{gaussian_k} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{h}\hlstd{) \{}          \hlcom{# Gaussian kernel}
+    \hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{/}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{h}\hlopt{^}\hlnum{2}\hlstd{))}
+\hlstd{\}}
+
+\hlstd{SVM} \hlkwb{<-} \hlkwd{Vectorize}\hlstd{(}\hlkwa{function}\hlstd{(}\hlkwc{sv}\hlstd{,} \hlkwc{i}\hlstd{) \{}
+    \hlstd{dists} \hlkwb{<-} \hlkwd{sapply}\hlstd{(sv,} \hlkwa{function} \hlstd{(}\hlkwc{m}\hlstd{) \{}
+        \hlkwd{gaussian_k}\hlstd{(}
+            \hlkwd{dist}\hlstd{(}\hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(spam[m,FEAT.COL], spam[i,FEAT.COL]),}
+                        \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{byrow} \hlstd{= T)), h)}
+    \hlstd{\})}
+    \hlkwd{t}\hlstd{(dists)} \hlopt{%*%} \hlstd{(spam[sv,SPAM.COL]} \hlopt{*} \hlnum{2} \hlopt{-} \hlnum{1}\hlstd{)}
+\hlstd{\},} \hlkwc{vectorize.args} \hlstd{=} \hlstr{'i'}\hlstd{)}
+
+\hlstd{online} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{M}\hlstd{,} \hlkwc{beta}\hlstd{) \{}
+    \hlstd{ptm} \hlkwb{<-} \hlkwd{proc.time}\hlstd{()}
+
+    \hlstd{errors} \hlkwb{<-} \hlnum{1}
+    \hlstd{errorrate} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlkwc{length} \hlstd{= N)}
+    \hlstd{errorrate[}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlnum{1}
+    \hlstd{sv} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{)}
+    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{2}\hlopt{:}\hlstd{N) \{}
+        \hlstd{yhat} \hlkwb{<-} \hlkwd{SVM}\hlstd{(sv, i)}
+        \hlstd{yi} \hlkwb{<-} \hlstd{spam[i,SPAM.COL]} \hlopt{*} \hlnum{2} \hlopt{-} \hlnum{1}
+        \hlstd{errors} \hlkwb{<-} \hlstd{errors} \hlopt{+} \hlstd{(yhat} \hlopt{*} \hlstd{yi} \hlopt{<} \hlnum{0}\hlstd{)}
+        \hlstd{errorrate[i]} \hlkwb{<-} \hlstd{errors} \hlopt{/} \hlstd{i}
+
+        \hlkwa{if} \hlstd{( yi} \hlopt{*} \hlstd{yhat} \hlopt{<=} \hlstd{beta ) \{}
+            \hlstd{sv} \hlkwb{<-} \hlkwd{c}\hlstd{(sv, i)}
+
+            \hlcom{## cat(length(sv), ' ')}
+            \hlkwa{if} \hlstd{(}\hlkwd{length}\hlstd{(sv)} \hlopt{>} \hlstd{M) \{}
+                \hlstd{svtags} \hlkwb{<-} \hlstd{spam[sv,SPAM.COL]} \hlopt{*}\hlnum{2} \hlopt{-}\hlnum{1}
+                \hlstd{sv} \hlkwb{<-}
+                    \hlstd{sv[}\hlopt{-}\hlkwd{which.max}\hlstd{(}
+                            \hlstd{svtags} \hlopt{*} \hlstd{(}\hlkwd{SVM}\hlstd{(sv,sv)} \hlopt{-} \hlstd{svtags)}
+                            \hlcom{## Because k(0,h) = 1}
+                        \hlstd{)]}
+            \hlstd{\}}
+        \hlstd{\}}
+        \hlcom{## cat('Step:', i,}
+        \hlcom{##     'SV:', length(sv),}
+        \hlcom{##     'Err:', errorrate[i],}
+        \hlcom{##     'yhat:', yhat,}
+        \hlcom{##     'product', (spam[i,'Spam'] * 2 - 1) * yhat, '\textbackslash{}n')}
+    \hlstd{\}}
+
+    \hlkwd{cat}\hlstd{(}\hlstr{'Terminated. M ='}\hlstd{, M,}\hlstr{'Beta ='}\hlstd{, beta,}
+        \hlstr{'SV = '}\hlstd{,} \hlkwd{length}\hlstd{(sv),}
+        \hlstr{'Elapsed ='}\hlstd{, (}\hlkwd{proc.time}\hlstd{()} \hlopt{-} \hlstd{ptm)[}\hlnum{3}\hlstd{],} \hlstr{'\textbackslash{}n'} \hlstd{)}
+    \hlstd{errorrate}
+\hlstd{\}}
+
+\hlstd{errors} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}
+    \hlkwd{c}\hlstd{(}\hlkwd{online}\hlstd{(}\hlnum{500}\hlstd{,} \hlnum{0}\hlstd{),}
+      \hlkwd{online}\hlstd{(}\hlnum{500}\hlstd{,} \hlopt{-}\hlnum{0.05}\hlstd{),}
+      \hlkwd{online}\hlstd{(}\hlnum{20}\hlstd{,} \hlnum{0}\hlstd{),}
+      \hlkwd{online}\hlstd{(}\hlnum{20}\hlstd{,} \hlopt{-}\hlnum{0.05}\hlstd{)),}
+    \hlkwc{ncol} \hlstd{=} \hlnum{4}
+\hlstd{)}
+
+
+\hlkwd{matplot}\hlstd{(}
+    \hlstd{errors,}
+    \hlkwc{type} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"l"}\hlstd{),}
+    \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,}
+    \hlkwc{pch} \hlstd{=} \hlnum{1}\hlstd{,}
+    \hlkwc{col} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(errors),}
+    \hlkwc{main} \hlstd{=} \hlstr{'Error Rates of Different Parameters'}\hlstd{,}
+    \hlkwc{xlab} \hlstd{=} \hlstr{'Sample Size'}\hlstd{,}
+    \hlkwc{ylab} \hlstd{=} \hlstr{'Error Rate'}\hlstd{)}
+\hlkwd{legend}\hlstd{(}\hlstr{"topright"}\hlstd{,} \hlkwc{legend} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'M = 500, Beta = 0'}\hlstd{,}
+                              \hlstr{'M = 500, Beta = -0.05'}\hlstd{,}
+                              \hlstr{'M = 20,  Beta = 0'}\hlstd{,}
+                              \hlstr{'M = 20,  Beta = -0.05'}\hlstd{),}
+       \hlkwc{col}\hlstd{=}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,} \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\end{document}
